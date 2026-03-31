@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)https://rjifshbb.gensparkspace.com/admin.html -->
+<html lang="kk"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Әкімші панелі — КазАту Онлайн Кітапхана</title>
+  <link rel="stylesheet" href="./index_files/style.css">
+  <link href="./index_files/css2" rel="stylesheet">
+  <style>
+    .dashboard-header {
+      background: linear-gradient(135deg, #1a56db, #1342c0);
+      color: white;
+      padding: 20px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dashboard-header h1 {
+      font-size: 1.3rem;
+      font-weight: 700;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    @media (max-width: 1024px) {
+      .mobile-menu-btn { display: block; }
+    }
+
+    .content-card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+    }
+
+    .user-table-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: white;
+    }
+
+    .add-book-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .add-book-form { grid-template-columns: 1fr; }
+    }
+
+    .quick-action {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .quick-action:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .qa-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .qa-text h4 { font-size: 0.95rem; font-weight: 700; }
+    .qa-text p { font-size: 0.82rem; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div id="toastContainer" class="toast-container"></div>
+  <div class="mobile-overlay" id="mobileOverlay"></div>
+
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">📚</div>
+        <div>
+          <div class="sidebar-title">КазАту Кітапхана</div>
+          <div class="sidebar-role">Басқару жүйесі</div>
+        </div>
+      </div>
+      
+      <div class="sidebar-user" id="sidebarUser">
+        <div class="user-avatar" style="background: #1a56db;">👨‍💼</div>
+        <div class="user-info">
+          <div class="user-name">Нурасыл Араббай</div>
+          <span class="user-role-badge badge-blue" style="background:#e8f0fe; color:#1a56db;">Әкімші</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-item active" onclick="showTab(&#39;overview&#39;)">
+          <span class="nav-icon">📊</span>
+          <span>Басты бет</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showTab(&#39;books&#39;)">
+          <span class="nav-icon">📚</span>
+          <span>Кітаптар</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showTab(&#39;users&#39;)">
+          <span class="nav-icon">👥</span>
+          <span>Пайдаланушылар</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showTab(&#39;borrows&#39;)">
+          <span class="nav-icon">📋</span>
+          <span>Беру журналы</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showTab(&#39;reports&#39;)">
+          <span class="nav-icon">📈</span>
+          <span>Есептер</span>
+        </div>
+        <div class="sidebar-nav-item" onclick="showTab(&#39;settings&#39;)">
+          <span class="nav-icon">⚙️</span>
+          <span>Баптаулар</span>
+        </div>
+      </nav>
+      
+      <div class="sidebar-footer">
+        <button class="logout-btn" onclick="logout()">
+          🚪 Шығу
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Mobile Header -->
+      <div class="dashboard-header" style="display:none;" id="mobileHeader">
+        <h1>📊 Әкімші панелі</h1>
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰ Мәзір</button>
+      </div>
+
+      <!-- OVERVIEW TAB -->
+      <div id="tab-overview" class="tab-content active">
+        <div class="page-header flex-between">
+          <div>
+            <h1>📊 Басқару тақтасы</h1>
+            <p>Кітапхана жүйесін толық басқарыңыз</p>
+          </div>
+          <button class="mobile-menu-btn" style="background: var(--primary); color:white; border-color: var(--primary);" onclick="toggleSidebar()">☰ Мәзір</button>
+        </div>
+
+        <div class="stats-grid" id="statsGrid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f0fe;">📚</div>
+          <div class="stat-info">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Барлық кітап</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dcfce7;">✅</div>
+          <div class="stat-info">
+            <div class="stat-value">10</div>
+            <div class="stat-label">Қол жетімді</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fee2e2;">📤</div>
+          <div class="stat-info">
+            <div class="stat-value">2</div>
+            <div class="stat-label">Берілген</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;">👥</div>
+          <div class="stat-info">
+            <div class="stat-value">4</div>
+            <div class="stat-label">Пайдаланушылар</div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Quick Actions -->
+        <h3 style="margin-bottom: 16px; font-size: 1rem; font-weight: 700;">⚡ Жылдам әрекеттер</h3>
+        <div class="grid grid-4" style="margin-bottom: 28px;" id="quickActionsGrid">
+          <div class="quick-action" onclick="showTab(&#39;books&#39;); openAddBookModal()">
+            <div class="qa-icon" style="background:#e8f0fe;">📕</div>
+            <div class="qa-text">
+              <h4>Кітап қосу</h4>
+              <p>Жаңа кітап тіркеу</p>
+            </div>
+          </div>
+          <div class="quick-action" onclick="showTab(&#39;users&#39;)">
+            <div class="qa-icon" style="background:#dcfce7;">👤</div>
+            <div class="qa-text">
+              <h4>Пайдаланушы</h4>
+              <p>Тізімді қарау</p>
+            </div>
+          </div>
+          <div class="quick-action" onclick="showTab(&#39;borrows&#39;)">
+            <div class="qa-icon" style="background:#fef3c7;">📋</div>
+            <div class="qa-text">
+              <h4>Беру журналы</h4>
+              <p>Кітап берулер</p>
+            </div>
+          </div>
+          <div class="quick-action" onclick="showTab(&#39;reports&#39;)">
+            <div class="qa-icon" style="background:#f3e8ff;">📈</div>
+            <div class="qa-text">
+              <h4>Есептер</h4>
+              <p>Статистика</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="content-card">
+          <div class="data-table-header">
+            <h3>🕐 Соңғы белсенділік</h3>
+            <span class="badge badge-blue">Барлығы</span>
+          </div>
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Кітап</th>
+                  <th>Оқырман</th>
+                  <th>Күй</th>
+                  <th>Күні</th>
+                </tr>
+              </thead>
+              <tbody id="recentActivity">
+          <tr>
+            <td><strong>Ботагөз</strong></td>
+            <td>Дина Ахметова</td>
+            <td><span class="badge badge-yellow">Оқылуда</span></td>
+            <td>1 маусым 2024</td>
+          </tr>
+        
+          <tr>
+            <td><strong>Жыланды жыл</strong></td>
+            <td>Дина Ахметова</td>
+            <td><span class="badge badge-yellow">Оқылуда</span></td>
+            <td>5 маусым 2024</td>
+          </tr>
+        
+          <tr>
+            <td><strong>Абай жолы</strong></td>
+            <td>Дина Ахметова</td>
+            <td><span class="badge badge-green">Қайтарылды</span></td>
+            <td>10 мамыр 2024</td>
+          </tr>
+        </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKS TAB -->
+      <div id="tab-books" class="tab-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1>📚 Кітаптар</h1>
+            <p>Кітапхана қорын басқарыңыз</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAddBookModal()">➕ Кітап қосу</button>
+        </div>
+
+        <div class="catalog-filters" style="margin-bottom: 20px;">
+          <div class="search-bar" style="flex:1; min-width: 200px;">
+            <span class="search-icon">🔍</span>
+            <input type="text" placeholder="Кітап іздеу..." id="bookSearchInput" oninput="filterAdminBooks()">
+          </div>
+          <select class="form-select" style="width:180px;" id="categoryFilter" onchange="filterAdminBooks()">
+            <option value="">Барлық санат</option>
+            <option>Роман</option>
+            <option>Тарихи роман</option>
+            <option>Балалар әдебиеті</option>
+            <option>Повесть</option>
+            <option>Драма</option>
+            <option>Поэма</option>
+          </select>
+        </div>
+
+        <div class="content-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Атауы</th>
+                  <th>Автор</th>
+                  <th>Санат</th>
+                  <th>Дана</th>
+                  <th>Күй</th>
+                  <th>Қосылған</th>
+                  <th>Әрекет</th>
+                </tr>
+              </thead>
+              <tbody id="adminBooksTable">
+        <tr>
+          <td>1</td>
+          <td><strong>Абай жолы</strong></td>
+          <td>Мұхтар Әуезов</td>
+          <td><span class="badge badge-blue">Роман</span></td>
+          <td>5</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>15 қаңтар 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(1)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(1)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>2</td>
+          <td><strong>Қан мен тер</strong></td>
+          <td>Әбдіжәмил Нұрпейісов</td>
+          <td><span class="badge badge-blue">Роман</span></td>
+          <td>4</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>20 қаңтар 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(2)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(2)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>3</td>
+          <td><strong>Ботагөз</strong></td>
+          <td>Сәбит Мұқанов</td>
+          <td><span class="badge badge-blue">Роман</span></td>
+          <td>3</td>
+          <td><span class="badge badge-red">Берілген</span></td>
+          <td>1 ақпан 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(3)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(3)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>4</td>
+          <td><strong>Атамекен</strong></td>
+          <td>Ілияс Есенберлин</td>
+          <td><span class="badge badge-blue">Тарихи роман</span></td>
+          <td>6</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>10 ақпан 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(4)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(4)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>5</td>
+          <td><strong>Менің атым Қожа</strong></td>
+          <td>Бердібек Соқпақбаев</td>
+          <td><span class="badge badge-blue">Балалар әдебиеті</span></td>
+          <td>8</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>15 ақпан 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(5)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(5)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>6</td>
+          <td><strong>Сарыарқа</strong></td>
+          <td>Ғабит Мүсірепов</td>
+          <td><span class="badge badge-blue">Повесть</span></td>
+          <td>3</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>20 ақпан 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(6)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(6)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>7</td>
+          <td><strong>Жыланды жыл</strong></td>
+          <td>Оралхан Бөкей</td>
+          <td><span class="badge badge-blue">Повесть</span></td>
+          <td>4</td>
+          <td><span class="badge badge-red">Берілген</span></td>
+          <td>1 наурыз 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(7)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(7)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>8</td>
+          <td><strong>Заман-ай, заман</strong></td>
+          <td>Дулат Исабеков</td>
+          <td><span class="badge badge-blue">Драма</span></td>
+          <td>3</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>10 наурыз 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(8)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(8)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>9</td>
+          <td><strong>Кіші жүздің ханы</strong></td>
+          <td>Ілияс Есенберлин</td>
+          <td><span class="badge badge-blue">Тарихи роман</span></td>
+          <td>5</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>15 наурыз 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(9)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(9)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>10</td>
+          <td><strong>Шығанақ</strong></td>
+          <td>Ғали Орманов</td>
+          <td><span class="badge badge-blue">Поэма</span></td>
+          <td>4</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>20 наурыз 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(10)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(10)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>11</td>
+          <td><strong>Қасқыр</strong></td>
+          <td>Оралхан Бөкей</td>
+          <td><span class="badge badge-blue">Повесть</span></td>
+          <td>3</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>1 сәуір 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(11)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(11)">🗑️</button>
+          </td>
+        </tr>
+      
+        <tr>
+          <td>12</td>
+          <td><strong>Биыл жаз ыстық болады</strong></td>
+          <td>Сейіткәлі Оспанов</td>
+          <td><span class="badge badge-blue">Роман</span></td>
+          <td>3</td>
+          <td><span class="badge badge-green">Қол жетімді</span></td>
+          <td>5 сәуір 2024</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(12)">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(12)">🗑️</button>
+          </td>
+        </tr>
+      </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS TAB -->
+      <div id="tab-users" class="tab-content">
+        <div class="page-header flex-between">
+          <div>
+            <h1>👥 Пайдаланушылар</h1>
+            <p>Жүйе пайдаланушыларын басқарыңыз</p>
+          </div>
+          <button class="btn btn-primary" onclick="openAddUserModal()">➕ Пайдаланушы қосу</button>
+        </div>
+
+        <div class="content-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Пайдаланушы</th>
+                  <th>Логин</th>
+                  <th>Email</th>
+                  <th>Рөл</th>
+                  <th>Телефон</th>
+                  <th>Әрекет</th>
+                </tr>
+              </thead>
+              <tbody id="usersTable">
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="user-table-avatar" style="background:#1a56db;">👨‍💼</div>
+                <strong>Нурасыл Араббай</strong>
+              </div>
+            </td>
+            <td><code>admin</code></td>
+            <td>admin@kitaphana.kz</td>
+            <td><span class="badge badge-blue">Әкімші</span></td>
+            <td>+7 747 495 4358</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="showToast(&#39;Өңдеу режимі&#39;, &#39;info&#39;)">✏️</button>
+            </td>
+          </tr>
+        
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="user-table-avatar" style="background:#0ea271;">👩‍🎓</div>
+                <strong>Дина Ахметова</strong>
+              </div>
+            </td>
+            <td><code>okyrman</code></td>
+            <td>dina@mail.kz</td>
+            <td><span class="badge badge-green">Оқырман</span></td>
+            <td>+7 702 234 5678</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="showToast(&#39;Өңдеу режимі&#39;, &#39;info&#39;)">✏️</button>
+            </td>
+          </tr>
+        
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="user-table-avatar" style="background:#7c3aed;">👩‍💼</div>
+                <strong>Гүлнар Бекова</strong>
+              </div>
+            </td>
+            <td><code>kitaphanashy</code></td>
+            <td>gulnar@kitaphana.kz</td>
+            <td><span class="badge badge-purple">Кітапханашы</span></td>
+            <td>+7 703 345 6789</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="showToast(&#39;Өңдеу режимі&#39;, &#39;info&#39;)">✏️</button>
+            </td>
+          </tr>
+        
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="user-table-avatar" style="background:#d97706;">👨‍💻</div>
+                <strong>Серік Әділжан</strong>
+              </div>
+            </td>
+            <td><code>it_engineer</code></td>
+            <td>Adil@kitaphana.kz</td>
+            <td><span class="badge badge-yellow">IT Инженері</span></td>
+            <td>+7 777 561 4329</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="showToast(&#39;Өңдеу режимі&#39;, &#39;info&#39;)">✏️</button>
+            </td>
+          </tr>
+        </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- BORROWS TAB -->
+      <div id="tab-borrows" class="tab-content">
+        <div class="page-header">
+          <h1>📋 Беру журналы</h1>
+          <p>Кітаптардың берілу тарихы</p>
+        </div>
+
+        <div class="content-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Оқырман</th>
+                  <th>Кітап</th>
+                  <th>Берілген күні</th>
+                  <th>Қайтару күні</th>
+                  <th>Қайтарылды</th>
+                  <th>Күй</th>
+                </tr>
+              </thead>
+              <tbody id="borrowsTable">
+          <tr>
+            <td>Дина Ахметова</td>
+            <td>Ботагөз</td>
+            <td>1 маусым 2024</td>
+            <td>15 маусым 2024</td>
+            <td>—</td>
+            <td><span class="badge badge-yellow">Белсенді</span></td>
+          </tr>
+        
+          <tr>
+            <td>Дина Ахметова</td>
+            <td>Жыланды жыл</td>
+            <td>5 маусым 2024</td>
+            <td>19 маусым 2024</td>
+            <td>—</td>
+            <td><span class="badge badge-yellow">Белсенді</span></td>
+          </tr>
+        
+          <tr>
+            <td>Дина Ахметова</td>
+            <td>Абай жолы</td>
+            <td>10 мамыр 2024</td>
+            <td>24 мамыр 2024</td>
+            <td>22 мамыр 2024</td>
+            <td><span class="badge badge-green">Қайтарылды</span></td>
+          </tr>
+        </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- REPORTS TAB -->
+      <div id="tab-reports" class="tab-content">
+        <div class="page-header">
+          <h1>📈 Есептер мен статистика</h1>
+          <p>Кітапхана жұмысының жиынтық мәліметтері</p>
+        </div>
+
+        <div class="stats-grid" id="reportStats">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f0fe;">📊</div>
+          <div class="stat-info">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Барлық кітап</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dcfce7;">📖</div>
+          <div class="stat-info">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Беру саны</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;">👥</div>
+          <div class="stat-info">
+            <div class="stat-value">1</div>
+            <div class="stat-label">Оқырмандар</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f3e8ff;">⭐</div>
+          <div class="stat-info">
+            <div class="stat-value">4.7</div>
+            <div class="stat-label">Орт. баға</div>
+          </div>
+        </div>
+      </div>
+
+        <div class="grid grid-2">
+          <div class="content-card">
+            <div class="data-table-header">
+              <h3>📚 Ең көп оқылған кітаптар</h3>
+            </div>
+            <div id="topBooks" style="padding: 16px 20px;">
+        <div style="display:flex; align-items:center; gap:12px; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:1.2rem; width:24px; text-align:center;">🥇</span>
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">Менің атым Қожа</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">1521 пікір</div>
+          </div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:12px; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:1.2rem; width:24px; text-align:center;">🥈</span>
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">Абай жолы</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">1247 пікір</div>
+          </div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:12px; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:1.2rem; width:24px; text-align:center;">🥉</span>
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">Атамекен</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">984 пікір</div>
+          </div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:12px; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:1.2rem; width:24px; text-align:center;">4️⃣</span>
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">Қан мен тер</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">856 пікір</div>
+          </div>
+        </div>
+      
+        <div style="display:flex; align-items:center; gap:12px; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:1.2rem; width:24px; text-align:center;">5️⃣</span>
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">Кіші жүздің ханы</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">712 пікір</div>
+          </div>
+        </div>
+      </div>
+          </div>
+          <div class="content-card">
+            <div class="data-table-header">
+              <h3>🏷️ Санат бойынша</h3>
+            </div>
+            <div id="categoryStats" style="padding: 16px 20px;">
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">Роман</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">4 кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:33%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">Тарихи роман</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">2 кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:17%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">Балалар әдебиеті</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">1 кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:8%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">Повесть</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">3 кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:25%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">Драма</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">1 кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:8%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">Поэма</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">1 кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:8%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div id="tab-settings" class="tab-content">
+        <div class="page-header">
+          <h1>⚙️ Жүйе баптаулары</h1>
+          <p>Кітапхана жүйесін реттеңіз</p>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="content-card">
+            <div class="data-table-header"><h3>🏛️ Кітапхана туралы</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Кітапхана атауы</label>
+                <input type="text" class="form-input" value="Қазақ Онлайн Кітапхана">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Мекенжай</label>
+                <input type="text" class="form-input" value="Алматы қ., Абай к., 150">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Байланыс телефоны</label>
+                <input type="text" class="form-input" value="+7 727 123 4567">
+              </div>
+              <button class="btn btn-primary" onclick="showToast(&#39;Баптаулар сақталды ✅&#39;, &#39;success&#39;)">💾 Сақтау</button>
+            </div>
+          </div>
+          <div class="content-card">
+            <div class="data-table-header"><h3>📋 Жалпы ережелер</h3></div>
+            <div class="card-body">
+              <div class="form-group">
+                <label class="form-label">Максималды кітап беру мерзімі (күн)</label>
+                <input type="number" class="form-input" value="14">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Бір оқырманға максималды кітап саны</label>
+                <input type="number" class="form-input" value="3">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Кешіктірілген айыппұл (теңге/күн)</label>
+                <input type="number" class="form-input" value="100">
+              </div>
+              <button class="btn btn-success" onclick="showToast(&#39;Ережелер жаңартылды ✅&#39;, &#39;success&#39;)">💾 Сақтау</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ADD BOOK MODAL -->
+  <div class="modal-overlay" id="addBookModal">
+    <div class="modal" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>📕 Жаңа кітап қосу</h3>
+        <button class="modal-close" onclick="closeModal(&#39;addBookModal&#39;)">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="add-book-form">
+          <div class="form-group">
+            <label class="form-label">Кітап атауы *</label>
+            <input type="text" class="form-input" id="newBookTitle" placeholder="Кітап атауын енгізіңіз">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Автор *</label>
+            <input type="text" class="form-input" id="newBookAuthor" placeholder="Автор аты-жөні">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Санат</label>
+            <select class="form-select" id="newBookCategory">
+              <option>Роман</option>
+              <option>Тарихи роман</option>
+              <option>Балалар әдебиеті</option>
+              <option>Повесть</option>
+              <option>Драма</option>
+              <option>Поэма</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Шыққан жылы</label>
+            <input type="number" class="form-input" id="newBookYear" placeholder="мысалы: 1990">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Дана саны</label>
+            <input type="number" class="form-input" id="newBookCopies" value="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Бет саны</label>
+            <input type="number" class="form-input" id="newBookPages" placeholder="мысалы: 300">
+          </div>
+          <div class="form-group" style="grid-column: span 2;">
+            <label class="form-label">Сипаттама</label>
+            <textarea class="form-input" id="newBookDesc" rows="3" placeholder="Кітап туралы қысқаша сипаттама..."></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" style="color: var(--text-muted); border-color: var(--border);" onclick="closeModal(&#39;addBookModal&#39;)">Бас тарту</button>
+        <button class="btn btn-primary" onclick="addBook()">➕ Қосу</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD USER MODAL -->
+  <div class="modal-overlay" id="addUserModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>👤 Жаңа пайдаланушы қосу</h3>
+        <button class="modal-close" onclick="closeModal(&#39;addUserModal&#39;)">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Аты-жөні *</label>
+          <input type="text" class="form-input" id="newUserName" placeholder="Толық аты-жөні">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Логин *</label>
+          <input type="text" class="form-input" id="newUserLogin" placeholder="Логин">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Пароль *</label>
+          <input type="password" class="form-input" id="newUserPass" placeholder="Пароль">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Рөл</label>
+          <select class="form-select" id="newUserRole">
+            <option value="reader">Оқырман</option>
+            <option value="librarian">Кітапханашы</option>
+            <option value="it">IT Инженері</option>
+            <option value="admin">Әкімші</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="newUserEmail" placeholder="email@example.com">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" style="color: var(--text-muted); border-color: var(--border);" onclick="closeModal(&#39;addUserModal&#39;)">Бас тарту</button>
+        <button class="btn btn-primary" onclick="addUser()">➕ Қосу</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./index_files/data.js.Без названия"></script>
+  <script>
+    const currentUser = requireAuth(['admin']);
+    let adminBooks = [...BOOKS];
+    let adminUsers = [...USERS];
+
+    // Init
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSidebarUser();
+      renderStats();
+      renderRecentActivity();
+      renderAdminBooksTable();
+      renderUsersTable();
+      renderBorrowsTable();
+      renderReports();
+    });
+
+    function renderSidebarUser() {
+      const role = ROLES[currentUser.role];
+      document.getElementById('sidebarUser').innerHTML = `
+        <div class="user-avatar" style="background: ${role.color};">${currentUser.avatar}</div>
+        <div class="user-info">
+          <div class="user-name">${currentUser.name}</div>
+          <span class="user-role-badge ${role.labelBadge}" style="background:${role.bg}; color:${role.color};">${role.label}</span>
+        </div>
+      `;
+    }
+
+    function renderStats() {
+      const totalBooks = adminBooks.length;
+      const availableBooks = adminBooks.filter(b => b.status === 'available').length;
+      const borrowedBooks = adminBooks.filter(b => b.status === 'borrowed').length;
+      const totalUsers = adminUsers.length;
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f0fe;">📚</div>
+          <div class="stat-info">
+            <div class="stat-value">${totalBooks}</div>
+            <div class="stat-label">Барлық кітап</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dcfce7;">✅</div>
+          <div class="stat-info">
+            <div class="stat-value">${availableBooks}</div>
+            <div class="stat-label">Қол жетімді</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fee2e2;">📤</div>
+          <div class="stat-info">
+            <div class="stat-value">${borrowedBooks}</div>
+            <div class="stat-label">Берілген</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;">👥</div>
+          <div class="stat-info">
+            <div class="stat-value">${totalUsers}</div>
+            <div class="stat-label">Пайдаланушылар</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRecentActivity() {
+      const tbody = document.getElementById('recentActivity');
+      tbody.innerHTML = BORROW_RECORDS.map(rec => {
+        const book = BOOKS.find(b => b.id === rec.book_id);
+        const user = USERS.find(u => u.id === rec.user_id);
+        const statusBadge = rec.status === 'active' 
+          ? '<span class="badge badge-yellow">Оқылуда</span>'
+          : '<span class="badge badge-green">Қайтарылды</span>';
+        return `
+          <tr>
+            <td><strong>${book?.title}</strong></td>
+            <td>${user?.name}</td>
+            <td>${statusBadge}</td>
+            <td>${formatDate(rec.borrow_date)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderAdminBooksTable() {
+      const query = document.getElementById('bookSearchInput')?.value.toLowerCase() || '';
+      const category = document.getElementById('categoryFilter')?.value || '';
+      
+      let filtered = adminBooks.filter(b => {
+        const matchSearch = b.title.toLowerCase().includes(query) || b.author.toLowerCase().includes(query);
+        const matchCat = !category || b.category === category;
+        return matchSearch && matchCat;
+      });
+
+      document.getElementById('adminBooksTable').innerHTML = filtered.map((b, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td><strong>${b.title}</strong></td>
+          <td>${b.author}</td>
+          <td><span class="badge badge-blue">${b.category}</span></td>
+          <td>${b.copies}</td>
+          <td>${b.status === 'available' 
+            ? '<span class="badge badge-green">Қол жетімді</span>' 
+            : '<span class="badge badge-red">Берілген</span>'}</td>
+          <td>${formatDate(b.added)}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" onclick="editBook(${b.id})">✏️</button>
+            <button class="btn btn-sm btn-danger" style="margin-left:4px;" onclick="deleteBook(${b.id})">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterAdminBooks() {
+      renderAdminBooksTable();
+    }
+
+    function renderUsersTable() {
+      document.getElementById('usersTable').innerHTML = adminUsers.map(u => {
+        const role = ROLES[u.role];
+        return `
+          <tr>
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="user-table-avatar" style="background:${role.color};">${u.avatar}</div>
+                <strong>${u.name}</strong>
+              </div>
+            </td>
+            <td><code>${u.login}</code></td>
+            <td>${u.email}</td>
+            <td><span class="badge ${role.labelBadge}">${role.label}</span></td>
+            <td>${u.phone}</td>
+            <td>
+              <button class="btn btn-sm btn-warning" onclick="showToast('Өңдеу режимі', 'info')">✏️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderBorrowsTable() {
+      document.getElementById('borrowsTable').innerHTML = BORROW_RECORDS.map(rec => {
+        const book = BOOKS.find(b => b.id === rec.book_id);
+        const user = USERS.find(u => u.id === rec.user_id);
+        return `
+          <tr>
+            <td>${user?.name}</td>
+            <td>${book?.title}</td>
+            <td>${formatDate(rec.borrow_date)}</td>
+            <td>${formatDate(rec.due_date)}</td>
+            <td>${rec.return_date ? formatDate(rec.return_date) : '—'}</td>
+            <td>${rec.status === 'active' 
+              ? '<span class="badge badge-yellow">Белсенді</span>'
+              : '<span class="badge badge-green">Қайтарылды</span>'}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderReports() {
+      document.getElementById('reportStats').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#e8f0fe;">📊</div>
+          <div class="stat-info">
+            <div class="stat-value">${BOOKS.length}</div>
+            <div class="stat-label">Барлық кітап</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#dcfce7;">📖</div>
+          <div class="stat-info">
+            <div class="stat-value">${BORROW_RECORDS.length}</div>
+            <div class="stat-label">Беру саны</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#fef3c7;">👥</div>
+          <div class="stat-info">
+            <div class="stat-value">${USERS.filter(u=>u.role==='reader').length}</div>
+            <div class="stat-label">Оқырмандар</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:#f3e8ff;">⭐</div>
+          <div class="stat-info">
+            <div class="stat-value">${(BOOKS.reduce((s,b)=>s+b.rating,0)/BOOKS.length).toFixed(1)}</div>
+            <div class="stat-label">Орт. баға</div>
+          </div>
+        </div>
+      `;
+
+      // Top books
+      const topBooks = [...BOOKS].sort((a,b) => b.reviews - a.reviews).slice(0, 5);
+      document.getElementById('topBooks').innerHTML = topBooks.map((b, i) => `
+        <div style="display:flex; align-items:center; gap:12px; padding: 10px 0; border-bottom: 1px solid var(--border);">
+          <span style="font-size:1.2rem; width:24px; text-align:center;">${['🥇','🥈','🥉','4️⃣','5️⃣'][i]}</span>
+          <div>
+            <div style="font-weight:600; font-size:0.9rem;">${b.title}</div>
+            <div style="font-size:0.8rem; color:var(--text-muted);">${b.reviews} пікір</div>
+          </div>
+        </div>
+      `).join('');
+
+      // Category stats
+      const cats = {};
+      BOOKS.forEach(b => { cats[b.category] = (cats[b.category]||0) + 1; });
+      document.getElementById('categoryStats').innerHTML = Object.entries(cats).map(([cat, count]) => `
+        <div style="margin-bottom: 12px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+            <span style="font-size:0.88rem; font-weight:600;">${cat}</span>
+            <span style="font-size:0.88rem; color:var(--text-muted);">${count} кітап</span>
+          </div>
+          <div style="height:6px; background:var(--border); border-radius:3px;">
+            <div style="height:6px; width:${(count/BOOKS.length*100).toFixed(0)}%; background:var(--primary); border-radius:3px;"></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function showTab(name) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+      document.getElementById(`tab-${name}`).classList.add('active');
+      document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+      const items = document.querySelectorAll('.sidebar-nav-item');
+      const map = {overview:0, books:1, users:2, borrows:3, reports:4, settings:5};
+      items[map[name]].classList.add('active');
+      
+      // Close sidebar on mobile
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('mobileOverlay').classList.remove('show');
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+      document.getElementById('mobileOverlay').classList.toggle('show');
+    }
+
+    function openAddBookModal() {
+      document.getElementById('addBookModal').classList.add('show');
+    }
+
+    function openAddUserModal() {
+      document.getElementById('addUserModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    function addBook() {
+      const title = document.getElementById('newBookTitle').value.trim();
+      const author = document.getElementById('newBookAuthor').value.trim();
+      if (!title || !author) {
+        showToast('Атауы мен авторды толтырыңыз!', 'error');
+        return;
+      }
+      const newBook = {
+        id: adminBooks.length + 1,
+        title,
+        author,
+        category: document.getElementById('newBookCategory').value,
+        year: +document.getElementById('newBookYear').value || 2024,
+        copies: +document.getElementById('newBookCopies').value || 1,
+        available_copies: +document.getElementById('newBookCopies').value || 1,
+        pages: +document.getElementById('newBookPages').value || 0,
+        description: document.getElementById('newBookDesc').value,
+        status: 'available',
+        rating: 4.0,
+        reviews: 0,
+        cover_color: '#1a56db',
+        cover_emoji: '📗',
+        added: new Date().toISOString().split('T')[0],
+        tags: []
+      };
+      adminBooks.push(newBook);
+      closeModal('addBookModal');
+      renderAdminBooksTable();
+      renderStats();
+      showToast(`"${title}" кітабы қосылды! ✅`, 'success');
+    }
+
+    function addUser() {
+      const name = document.getElementById('newUserName').value.trim();
+      const login = document.getElementById('newUserLogin').value.trim();
+      const password = document.getElementById('newUserPass').value;
+      if (!name || !login || !password) {
+        showToast('Барлық міндетті өрістерді толтырыңыз!', 'error');
+        return;
+      }
+      const newUser = {
+        id: adminUsers.length + 1,
+        name,
+        login,
+        password,
+        role: document.getElementById('newUserRole').value,
+        email: document.getElementById('newUserEmail').value,
+        phone: '—',
+        avatar: '👤',
+        color: '#64748b'
+      };
+      adminUsers.push(newUser);
+      closeModal('addUserModal');
+      renderUsersTable();
+      showToast(`${name} қосылды! ✅`, 'success');
+    }
+
+    function deleteBook(id) {
+      if (confirm('Бұл кітапты жойғыңыз келе ме?')) {
+        adminBooks = adminBooks.filter(b => b.id !== id);
+        renderAdminBooksTable();
+        renderStats();
+        showToast('Кітап жойылды', 'success');
+      }
+    }
+
+    function editBook(id) {
+      showToast('Өңдеу режимі (демо нұсқа)', 'info');
+    }
+
+    initSidebar();
+  </script>
+
+
+</body></html>
